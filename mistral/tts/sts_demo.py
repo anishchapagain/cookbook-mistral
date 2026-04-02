@@ -24,6 +24,9 @@ This script demonstrates a real-time, triggerable speech-to-speech assistant usi
 
 **Note**: Requires a Mistral API key (`MISTRAL_API_KEY` env var).
 
+To run this cript:
+pip install pynput sounddevice queue scipy mistralai
+
 For more information, visit the [Blog Post](https://learn.mistral.ai/home/blogs/designing-a-speech-to-speech-assistant-2026-04-02).
 """
 
