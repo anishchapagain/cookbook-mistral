@@ -2,7 +2,7 @@
 
 Add approval flows to tool calls so users can review and confirm or reject actions before they execute.
 
-> **API status:** This cookbook uses the Python SDK's `extra` module (`RunContext`, `DeferredToolCallsException`). These are **beta** features and may change.
+> **API status:** This cookbook uses `client.beta.conversations`. This is a **beta** endpoint and may change.
 
 ---
 
@@ -25,16 +25,16 @@ Add approval flows to tool calls so users can review and confirm or reject actio
 
 ### Install
 
-`mistralai-private` is hosted on [Gemfury](https://gemfury.com/). Make sure the Gemfury index is configured before installing.
-
 ```bash
-uv add 'mistralai-private>=1.14.2'
+# Python
+pip install mistralai
+# or with uv
+uv add mistralai
 ```
 
-For [Recipe 5 (MCP mixed tools)](#5-mixed-tools--mcp--local-functions--built-in-tools), you also need the `agents` extra:
-
 ```bash
-uv add 'mistralai-private[agents]>=1.14.2'
+# TypeScript
+pnpm add @mistralai/mistralai
 ```
 
 ### Required environment variables
@@ -92,7 +92,8 @@ tools=[
 **Goal:** The Conversations API should return `FunctionCallEntry` with `confirmation_status: "pending"` for tools that require confirmation, and accept `tool_confirmations` with `"allow"` or `"deny"` to resume.
 
 #### Connector example (Gmail)
-> Get your GMail token by enabling a Gmail connector in a session on [Le Chat](https://chat.mistral.ai) and then clicking on the 🐞 icon and searching for string `oauth` to retrieve your token.
+
+Requires a valid Google OAuth2 token (`GMAIL_OAUTH_TOKEN` env var).
 
 **Step 1 — Start a conversation with `requires_confirmation` and extract the IDs:**
 
@@ -328,9 +329,9 @@ import asyncio
 import os
 import random
 
-from mistralai_private import MistralPrivate
-from mistralai_private.extra.run.context import RunContext
-from mistralai_private.extra.exceptions import DeferredToolCallsException
+from mistralai import Mistral
+from mistralai.extra.run.context import RunContext
+from mistralai.extra.exceptions import DeferredToolCallsException
 
 MODEL = "mistral-large-latest"
 
@@ -354,7 +355,7 @@ def request_approval(dc) -> bool:
 
 
 async def main():
-    client = MistralPrivate(api_key=os.environ["MISTRAL_API_KEY"])
+    client = Mistral(api_key=os.environ["MISTRAL_API_KEY"])
 
     conversation_id = None
     pending_inputs = [
@@ -411,9 +412,9 @@ Requires a valid Google OAuth2 token (`GMAIL_OAUTH_TOKEN` env var).
 import asyncio
 import os
 
-from mistralai_private import MistralPrivate
-from mistralai_private.extra.exceptions import DeferredToolCallsException
-from mistralai_private.extra.run.context import RunContext
+from mistralai import Mistral
+from mistralai.extra.exceptions import DeferredToolCallsException
+from mistralai.extra.run.context import RunContext
 
 MODEL = "mistral-large-latest"
 
@@ -425,7 +426,7 @@ def request_approval(dc) -> bool:
 
 
 async def main():
-    client = MistralPrivate(api_key=os.environ["MISTRAL_API_KEY"])
+    client = Mistral(api_key=os.environ["MISTRAL_API_KEY"])
 
     conversation_id = None
     pending_inputs = [
@@ -485,9 +486,9 @@ asyncio.run(main())
 import asyncio
 import os
 
-from mistralai_private import MistralPrivate
-from mistralai_private.extra.run.context import RunContext
-from mistralai_private.extra.exceptions import DeferredToolCallsException, DeferralReason
+from mistralai import Mistral
+from mistralai.extra.run.context import RunContext
+from mistralai.extra.exceptions import DeferredToolCallsException, DeferralReason
 
 MODEL = "mistral-medium-latest"
 
@@ -500,7 +501,7 @@ def request_approval(dc) -> bool:
 
 
 async def main():
-    client = MistralPrivate(api_key=os.environ["MISTRAL_API_KEY"])
+    client = Mistral(api_key=os.environ["MISTRAL_API_KEY"])
 
     conversation_id = None
     pending_inputs = "Search the web for the latest news about artificial intelligence today."
@@ -551,16 +552,16 @@ asyncio.run(main())
 
 **Goal:** `run_async` should handle three tool sources (remote MCP, local functions, built-in tools) in a single conversation. Each source should respect its own confirmation settings independently. `deferred.executed_results` should contain results from tools that auto-executed before the deferral.
 
-Requires `pip install mistralai-private[agents]` and a running MCP SSE server (this example uses CoinGecko).
+Requires a running MCP SSE server (this example uses CoinGecko).
 
 ```python
 import asyncio
 import os
 
-from mistralai_private import MistralPrivate
-from mistralai_private.extra.run.context import RunContext
-from mistralai_private.extra.mcp.sse import MCPClientSSE, SSEServerParams
-from mistralai_private.extra.exceptions import DeferredToolCallsException
+from mistralai import Mistral
+from mistralai.extra.run.context import RunContext
+from mistralai.extra.mcp.sse import MCPClientSSE, SSEServerParams
+from mistralai.extra.exceptions import DeferredToolCallsException
 
 MODEL = "mistral-medium-latest"
 
@@ -601,7 +602,7 @@ def request_approval(dc) -> bool:
 
 
 async def main():
-    client = MistralPrivate(api_key=os.environ["MISTRAL_API_KEY"])
+    client = Mistral(api_key=os.environ["MISTRAL_API_KEY"])
 
     coingecko_url = "https://mcp.api.coingecko.com/sse"
     mcp_client = MCPClientSSE(sse_params=SSEServerParams(url=coingecko_url, timeout=60))
@@ -677,10 +678,10 @@ import asyncio
 import os
 import random
 
-from mistralai_private import MistralPrivate
-from mistralai_private.extra.run.context import RunContext
-from mistralai_private.extra.run.result import RunResult
-from mistralai_private.extra.exceptions import DeferredToolCallsException
+from mistralai import Mistral
+from mistralai.extra.run.context import RunContext
+from mistralai.extra.run.result import RunResult
+from mistralai.extra.exceptions import DeferredToolCallsException
 
 MODEL = "mistral-large-latest"
 
@@ -704,7 +705,7 @@ def request_approval(dc) -> bool:
 
 
 async def main():
-    client = MistralPrivate(api_key=os.environ["MISTRAL_API_KEY"])
+    client = Mistral(api_key=os.environ["MISTRAL_API_KEY"])
 
     conversation_id = None
     pending_inputs = [
@@ -758,9 +759,9 @@ import asyncio
 import json
 import os
 
-from mistralai_private import MistralPrivate
-from mistralai_private.extra.run.context import RunContext
-from mistralai_private.extra.exceptions import DeferredToolCallsException
+from mistralai import Mistral
+from mistralai.extra.run.context import RunContext
+from mistralai.extra.exceptions import DeferredToolCallsException
 
 
 def book_flight(destination: str, date: str) -> str:
@@ -769,7 +770,7 @@ def book_flight(destination: str, date: str) -> str:
 
 
 async def main():
-    client = MistralPrivate(api_key=os.environ["MISTRAL_API_KEY"])
+    client = Mistral(api_key=os.environ["MISTRAL_API_KEY"])
 
     async with RunContext(model="mistral-large-latest") as run_ctx:
         run_ctx.register_func(book_flight, requires_confirmation=True)
@@ -800,9 +801,9 @@ import asyncio
 import json
 import os
 
-from mistralai_private import MistralPrivate
-from mistralai_private.extra.run.context import RunContext
-from mistralai_private.extra.exceptions import DeferredToolCallsException, DeferredToolCallEntry
+from mistralai import Mistral
+from mistralai.extra.run.context import RunContext
+from mistralai.extra.exceptions import DeferredToolCallsException, DeferredToolCallEntry
 
 
 def book_flight(destination: str, date: str) -> str:
@@ -828,7 +829,7 @@ async def main():
     pending_inputs = list(deferred.executed_results) + pending_inputs
 
     # Resume the conversation
-    client = MistralPrivate(api_key=os.environ["MISTRAL_API_KEY"])
+    client = Mistral(api_key=os.environ["MISTRAL_API_KEY"])
 
     async with RunContext(model="mistral-large-latest") as run_ctx:
         run_ctx.conversation_id = deferred.conversation_id
