@@ -2,7 +2,7 @@
 
 Use MCP connectors, built-in tools, and agents with the Chat Completions API (`/v1/chat/completions`) and Agent Completions API (`/v1/agents/completions`).
 
-> **SDK support:** The `mistralai_private` SDK supports connector-style tools in `chat.complete()`. Note that responses use `messages` (array) instead of `message` (object) when tools are invoked.
+> **SDK support:** The `mistralai` SDK supports connector-style tools in `chat.complete()`. Note that responses use `messages` (array) instead of `message` (object) when tools are invoked.
 
 ---
 
@@ -31,10 +31,10 @@ Use MCP connectors, built-in tools, and agents with the Chat Completions API (`/
 ### Install
 
 ```bash
-# Python - using the private SDK
-pip install mistralai-private
+# Python
+pip install mistralai
 # or with uv
-uv add mistralai-private
+uv add mistralai
 ```
 
 ```bash
@@ -202,13 +202,13 @@ All recipes below reference this helper. Copy it into your project, or inline th
 
 ```python
 import asyncio
-from mistralai_private import MistralPrivate
+from mistralai.client import Mistral
 
 API_KEY = "your-api-key"
 
 
 async def main() -> None:
-    client = MistralPrivate(api_key=API_KEY)
+    client = Mistral(api_key=API_KEY)
 
     response = await client.chat.complete_async(
         model="mistral-small-latest",
@@ -289,13 +289,13 @@ The capital of France is Paris.
 
 ```python
 import asyncio
-from mistralai_private import MistralPrivate
+from mistralai.client import Mistral
 
 API_KEY = "your-api-key"
 
 
 async def main() -> None:
-    client = MistralPrivate(api_key=API_KEY)
+    client = Mistral(api_key=API_KEY)
 
     response = await client.chat.complete_async(
         model="mistral-small-latest",
@@ -393,13 +393,13 @@ Here's a beautiful sunset over the ocean as requested.
 
 ```python
 import asyncio
-from mistralai_private import MistralPrivate
+from mistralai.client import Mistral
 
 API_KEY = "your-api-key"
 
 
 async def main() -> None:
-    client = MistralPrivate(api_key=API_KEY)
+    client = Mistral(api_key=API_KEY)
 
     response = await client.chat.complete_async(
         model="mistral-small-latest",
@@ -508,13 +508,13 @@ The sqlite/sqlite repository is organized into several key directories:
 
 ```python
 import asyncio
-from mistralai_private import MistralPrivate
+from mistralai.client import Mistral
 
 API_KEY = "your-api-key"
 
 
 async def main() -> None:
-    client = MistralPrivate(api_key=API_KEY)
+    client = Mistral(api_key=API_KEY)
 
     response = await client.chat.complete_async(
         model="mistral-small-latest",
@@ -625,13 +625,13 @@ I have access to the following tools:
 
 ```python
 import asyncio
-from mistralai_private import MistralPrivate
+from mistralai.client import Mistral
 
 API_KEY = "your-api-key"
 
 
 async def main() -> None:
-    client = MistralPrivate(api_key=API_KEY)
+    client = Mistral(api_key=API_KEY)
     agent_id: str | None = None
 
     try:
@@ -758,13 +758,13 @@ Deleted agent: b2c3d4e5-6789-01ab-cdef-234567890abc
 
 ```python
 import asyncio
-from mistralai_private import MistralPrivate
+from mistralai.client import Mistral
 
 API_KEY = "your-api-key"
 
 
 async def main() -> None:
-    client = MistralPrivate(api_key=API_KEY)
+    client = Mistral(api_key=API_KEY)
     agent_id = "your-agent-id"  # From agent creation
 
     response = await client.agents.complete_async(
@@ -857,13 +857,13 @@ SQLite is a self-contained, serverless, zero-configuration SQL database engine. 
 
 ```python
 import asyncio
-from mistralai_private import MistralPrivate
+from mistralai.client import Mistral
 
 API_KEY = "your-api-key"
 
 
 async def main() -> None:
-    client = MistralPrivate(api_key=API_KEY)
+    client = Mistral(api_key=API_KEY)
     google_oauth_token = "your-google-oauth-token"
 
     response = await client.chat.complete_async(
@@ -982,14 +982,13 @@ Your latest email is from John Doe with the subject "Q1 Report Review" received 
 
 ```python
 import asyncio
-from mistralai_private import MistralPrivate
+from mistralai.client import Mistral
 
 API_KEY = "your-api-key"
-CONNECTOR_HEADERS = {"X-Private-Access": "your-private-access-key"}
 
 
 async def main() -> None:
-    client = MistralPrivate(api_key=API_KEY)
+    client = Mistral(api_key=API_KEY)
     connector_id: str | None = None
     agent_id: str | None = None
 
@@ -1000,7 +999,6 @@ async def main() -> None:
             description="DeepWiki connector for completion testing",
             server="https://mcp.deepwiki.com/mcp",
             visibility="private",
-            http_headers=CONNECTOR_HEADERS,
         )
         connector_id = str(connector.id)
         print(f"Created connector: {connector.name} ({connector_id})")
@@ -1065,7 +1063,6 @@ async def main() -> None:
             try:
                 await client.beta.connectors.delete_async(
                     connector_id=connector_id,
-                    http_headers=CONNECTOR_HEADERS,
                 )
                 print(f"Deleted connector: {connector_id}")
             except Exception:
